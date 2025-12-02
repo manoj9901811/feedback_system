@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Faculties</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background: #667eea;
+      color: white;
+    }
+    tr:hover {
+      background: #f1f1f1;
+    }
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .delete-btn {
+      background: #e53e3e;
+      color: white;
+    }
+    .delete-btn:hover {
+      background: #c53030;
+    }
+    .top-right-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <a href="{% url 'add_faculty' %}" class="top-right-btn">Back</a>
+
+  <h2>Faculty List</h2>
+  <table>
+    <tr>
+      <th>USN</th>
+      <th>Name</th>
+      <th>Action</th>
+    </tr>
+    {% for faculty in faculties %}
+    <tr>
+      <td>{{ faculty.usn }}</td>
+      <td>{{ faculty.name }}</td>
+      <td>
+        <form method="post" action="{% url 'delete_faculty' faculty.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn delete-btn">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="3">No faculties found.</td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

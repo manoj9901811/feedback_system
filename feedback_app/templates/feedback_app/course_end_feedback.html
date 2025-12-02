@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Course-End Survey</title>
+  <style>
+    .question-block {
+      margin-bottom: 20px;
+    }
+    .rating-options {
+      display: flex;
+      gap: 15px;
+      margin-top: 5px;
+    }
+    label {
+      display: inline-flex;
+      align-items: center;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>Course-End Survey</h2>
+  <h4>Rating: 1 - Poor, 2 - Satisfactory, 3 - Good, 4 - Very Good, 5 - Excellent</h4>
+  <hr>
+  <form method="post">
+    {% csrf_token %}
+    {% for question in questions %}
+      <div class="question-block">
+        <p><strong>{{ forloop.counter }}. {{ question.text }}</strong></p>
+        <div class="rating-options">
+          {% for i in ratings %}
+            <label>
+              <input type="radio" name="rating_{{ question.id }}" value="{{ i }}" required> {{ i }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+    <br>
+    <button type="submit">Submit Course-End Feedback</button>
+  </form>
+</body>
+</html>

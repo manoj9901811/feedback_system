@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        /* Enhanced Table Styling */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .table-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .table-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-title::before {
+            content: '';
+            width: 4px;
+            height: 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .year-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .year-selector label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .year-selector select {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: #4a5568;
+            transition: all 0.3s ease;
+            min-width: 150px;
+            cursor: pointer;
+        }
+
+        .year-selector select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .year-selector select:hover {
+            border-color: #cbd5e0;
+        }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+
+        .modern-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .modern-table th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            border: none;
+        }
+
+        .modern-table th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .modern-table th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .modern-table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .modern-table tbody tr:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        .modern-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .modern-table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+
+        .modern-table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+
+        .modern-table td {
+            padding: 16px 20px;
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-weight: 500;
+            border: none;
+            position: relative;
+        }
+
+        .modern-table td:first-child {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* Alternating row colors with gradient */
+        .modern-table tbody tr:nth-child(even) {
+            background: linear-gradient(135deg, #f9fafb 0%, #f7fafc 100%);
+        }
+
+        /* Empty state styling */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .empty-state::before {
+            content: '📋';
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Download button styling */
+        .btn-download {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+            background: linear-gradient(135deg, #38a169, #2f855a);
+        }
+
+        .btn-download::before {
+            content: '📥';
+            font-size: 1rem;
+        }
+
+        /* Responsive table */
+        @media (max-width: 768px) {
+            .table-container {
+                padding: 15px;
+                margin: 0 -10px 20px -10px;
+                border-radius: 0;
+            }
+
+            .table-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .modern-table {
+                font-size: 0.8rem;
+            }
+
+            .modern-table th,
+            .modern-table td {
+                padding: 12px 8px;
+            }
+
+            .year-selector {
+                justify-content: space-between;
+            }
+
+            .year-selector select {
+                min-width: 120px;
+            }
+        }
+
+        /* Base styles from original design */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Left Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 30px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .nav-menu {
+            padding: 20px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-section-title {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 25px;
+            margin-bottom: 15px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover::before,
+        .nav-link.active::before {
+            transform: scaleY(1);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .nav-link:hover .nav-icon,
+        .nav-link.active .nav-icon {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-box {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 15px;
+            width: 250px;
+            font-size: 0.9rem;
+            color: #4a5568;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: #718096;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            color: #48bb78;
+            font-weight: 500;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 101, 101, 0.4);
+        }
+
+        /* Color variants for stat cards */
+        .stat-card.blue .stat-icon { background: linear-gradient(135deg, #4299e1, #3182ce); }
+        .stat-card.green .stat-icon { background: linear-gradient(135deg, #48bb78, #38a169); }
+        .stat-card.orange .stat-icon { background: linear-gradient(135deg, #ed8936, #dd6b20); }
+        .stat-card.purple .stat-icon { background: linear-gradient(135deg, #9f7aea, #805ad5); }
+
+        /* Logout Section */
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            padding: 0 25px;
+        }
+
+        .logout-btn {
+            width: 60%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            margin: 0 auto;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .top-bar {
+                padding: 15px 20px;
+            }
+            
+            .search-box {
+                width: 180px;
+            }
+            
+            .content-area {
+                padding: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">ADMIN PANEL</div>
+                <div class="logo-subtitle">Academic Management</div>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <div class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <div class="nav-icon"><i class="fa-solid fa-chalkboard"></i></div>
+                            Dashboard
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">User Management</div>
+                    <div class="nav-item">
+                        <a href="{% url 'add_faculty' %}" class="nav-link">
+                            <div class="nav-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                            Add Faculty
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'add_student' %}" class="nav-link">
+                            <div class="nav-icon"><i class="fa-solid fa-user-graduate"></i></div>
+                            Add Student
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Academic</div>
+                    <div class="nav-item">
+                        <a href="{% url 'add_subject' %}" class="nav-link">
+                            <div class="nav-icon"><i class="fa-solid fa-book"></i></div>
+                            Add Subject
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'assign_subject' %}" class="nav-link">
+                            <div class="nav-icon"><i class="fas fa-tasks"></i></div>
+                            Assign Subject
+                        </a>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <div class="nav-item">
+                        <a href="{% url 'assign_section' %}" class="nav-link">
+                            <div class="nav-icon"><i class="fa-solid fa-school"></i></div>
+                            Assign Section
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'map_student_faculty' %}" class="nav-link">
+                            <div class="nav-icon"><i class="fa fa-link" aria-hidden="true"></i></div>
+                            Map Student-Faculty
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a href="{% url 'feedback_report' %}" class="nav-link">
+                            <div class="nav-icon"><i class="fa fa-file" aria-hidden="true"></i></div>
+                            Feedback Reports
+                        </a>
+                    </div>
+                </div>
+                <a href="{% url 'logout' %}" class="logout-btn">
+                    <span><i class="fa fa-sign-out" aria-hidden="true"></i></span>
+                    Logout
+                </a>
+            </nav>
+            <br><br>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1 class="page-title">Dashboard</h1>
+                <div class="user-actions">
+                    <input type="text" class="search-box" placeholder="Search...">
+                    <div class="user-avatar"><i class="fa-solid fa-circle-user"></i></div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Total Students</div>
+                            </div>
+                            <div class="stat-icon">👨‍🎓</div>
+                        </div>
+                        <div class="stat-number">{{ students|length }}</div>
+                    </div>
+
+                    <div class="stat-card green">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Faculty Members</div>
+                            </div>
+                            <div class="stat-icon">👨‍🏫</div>
+                        </div>
+                        <div class="stat-number">{{ faculty|length }}</div>
+                    </div>
+
+                    <div class="stat-card orange">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Active Subjects</div>
+                            </div>
+                            <div class="stat-icon">📚</div>
+                        </div>
+                        <div class="stat-number">{{ subjects|length }}</div>
+                    </div>
+
+                    <div class="stat-card purple">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-title">Total Sections</div>
+                            </div>
+                            <div class="stat-icon">🏫</div>
+                        </div>
+                        <div class="stat-number">{{ sections|length }}</div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Student Details Table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h2 class="table-title">
+                            Student Details{% if selected_year %} - Year {{ selected_year }}{% endif %}
+                        </h2>
+                        
+                        <form method="get" class="year-selector">
+                            <label for="year-select">Filter by Year:</label>
+                            <select name="year" id="year-select" onchange="this.form.submit()">
+                                <option value="">-- All Years --</option>
+                                {% for y in years %}
+                                    <option value="{{ y }}" {% if selected_year == y %}selected{% endif %}>Year {{ y }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+
+                    <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>USN</th>
+                                <th>Student Name</th>
+                                <th>Section</th>
+                                <th>User ID</th>
+                                <th>Password</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                                <tr>
+                                    <td>{{ student.usn }}</td>
+                                    <td>{{ student.name }}</td>
+                                    <td>{{ student.section }}</td>
+                                    <td>{{ student.generated_userid }}</td>
+                                    <td>{{ student.generated_password }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="empty-state">
+                                        No students found for the selected year.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <form action="{% url 'download_students_excel' %}" method="get">
+                        {% if selected_year %}
+                            <input type="hidden" name="year" value="{{ selected_year }}">
+                        {% endif %}
+                        <button class="btn-download" type="submit">Download Excel Report</button>
+                    </form>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="action-buttons">
+                    <a href="{% url 'add_faculty' %}" class="action-btn btn-primary">
+                        <span>➕</span> Quick Add Faculty
+                    </a>
+                    <a href="{% url 'add_student' %}" class="action-btn btn-primary">
+                        <span>➕</span> Quick Add Student
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Highlight active navigation
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Animate stats on load
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const finalNumber = stat.textContent.replace(/[^\d]/g, '');
+                if (finalNumber) {
+                    let currentNumber = 0;
+                    const increment = parseInt(finalNumber) / 50;
+                    const timer = setInterval(() => {
+                        currentNumber += increment;
+                        if (currentNumber >= parseInt(finalNumber)) {
+                            stat.textContent = stat.textContent.replace(/[\d,]+/, finalNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+                            clearInterval(timer);
+                        } else {
+                            const displayNumber = Math.floor(currentNumber).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                            stat.textContent = stat.textContent.replace(/[\d,]+/, displayNumber);
+                        }
+                    }, 20);
+                }
+            });
+
+            // Enhanced search functionality
+            const searchBox = document.querySelector('.search-box');
+            searchBox.addEventListener('focus', function() {
+                this.style.width = '300px';
+            });
+            searchBox.addEventListener('blur', function() {
+                if (window.innerWidth > 768) {
+                    this.style.width = '250px';
+                }
+            });
+
+            // Add table row click animation
+            const tableRows = document.querySelectorAll('.modern-table tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('click', function() {
+                    // Add a subtle selection effect
+                    this.style.background = 'linear-gradient(135deg, #e6f3ff 0%, #f0f8ff 100%)';
+                    setTimeout(() => {
+                        this.style.background = '';
+                    }, 1000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
