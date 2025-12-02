@@ -148,3 +148,7 @@ DATABASES = {
         ssl_require=True
     )
 }
+
+
+FIXTURE_DIRS = [ BASE_DIR / "feedback_app/fixtures" ]
+
