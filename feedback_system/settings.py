@@ -138,3 +138,13 @@ SESSION_COOKIE_AGE = 60 * 60 * 24  # 24 hours session expiry (optional)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = False
 
+
+import os
+import dj_database_url
+DATABASES = {
+    'default': dj_database_url.parse(
+        "postgresql://feedback_system_db_iwym_user:fC6HKOq9t4zo1BP9mJuwK0tRkiTOgfGu@dpg-d4ngk4i4d50c73ffee30-a.oregon-postgres.render.com/feedback_system_db_iwym",
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
