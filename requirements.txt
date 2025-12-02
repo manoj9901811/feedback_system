@@ -1,3 +1,4 @@
 Django==4.2.9
 gunicorn
 whitenoise==6.6.0
+python-docx
