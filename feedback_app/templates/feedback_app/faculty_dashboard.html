@@ -2,114 +2,452 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Faculty Dashboard</title>
   <style>
+    :root {
+      --primary: #667eea;
+      --primary-dark: #5568d3;
+      --secondary: #764ba2;
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --shadow-sm: 0 2px 8px rgba(102, 126, 234, 0.15);
+      --shadow-md: 0 8px 24px rgba(102, 126, 234, 0.2);
+      --shadow-lg: 0 20px 40px rgba(102, 126, 234, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--gradient);
       min-height: 100vh;
-      padding: 40px;
+      padding: 40px 20px;
       color: #333;
+      position: relative;
+      overflow-x: hidden;
     }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: drift 20s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(50px, 50px); }
+    }
+
     .dashboard {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: auto;
       background: #fff;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .1);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      animation: slideIn 0.5s ease-out;
     }
-    label {
-      font-weight: 600;
-      display: block;
-      margin: 20px 0 10px;
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    select[multiple], select.single {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
+
+    .dashboard::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: var(--gradient);
+      border-radius: 24px 24px 0 0;
     }
-    select[multiple] {
-      height: 120px;
-    }
-    button {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: #667eea;
-      border: none;
-      color: #fff;
-      font-size: 14px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .logout-btn {
-      background: #667eea;
-      margin-top: 0;
-    }
-    .divider {
-      height: 1px;
-      background: #ddd;
-      margin: 30px 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px 6px;
-      text-align: center;
-      font-size: 14px;
-    }
-    th {
-      background: #f3f3f3;
-      font-weight: 600;
-    }
-    td.cat {
-      text-align: left;
-    }
-    ul {
-      list-style: disc;
-      margin-left: 20px;
-    }
-    .no-feedback {
-      text-align: center;
-      color: #888;
-      margin-top: 30px;
-    }
-    .summary-right {
-      margin-top: 15px;
-      text-align: right;
-    }
-    .summary-right strong {
-      font-size: 16px;
-    }
-    .w-narrow {
-      width: 40px;
-    }
+
     .top-bar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      gap: 20px;
+      flex-wrap: wrap;
     }
-    .faculty-info {
-      font-size: 14px;
-      color: #555;
-      text-align: right;
-      margin-right: 15px;
-    }
+
     .title-section {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      flex: 1;
     }
+
     .title-section h2 {
+      margin: 0 0 20px 0;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .faculty-card {
+      padding: 16px 24px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f6f8fc 0%, #eef2f7 100%);
+      border: 2px solid rgba(102, 126, 234, 0.2);
+      font-size: 1rem;
+      font-weight: 600;
+      color: #333;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .faculty-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+    }
+
+    .faculty-card::before {
+      content: '👤';
+      font-size: 1.5rem;
+    }
+
+    .logout-btn {
+      background: var(--gradient);
       margin: 0;
+      padding: 12px 28px;
+      border: none;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .logout-btn:active {
+      transform: translateY(0);
+    }
+
+    h3 {
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1.3rem;
+      margin: 30px 0 20px 0;
+      position: relative;
+      padding-bottom: 12px;
+    }
+
+    h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: var(--gradient);
+      border-radius: 2px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+
+    ul li {
+      padding: 14px 20px;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f0f4f8 100%);
+      border-radius: 10px;
+      border-left: 4px solid var(--primary);
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    ul li:hover {
+      transform: translateX(6px);
+      box-shadow: var(--shadow-sm);
+      background: linear-gradient(135deg, #eef2f7 0%, #e6ecf2 100%);
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin: 25px 0 12px;
+      color: #333;
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
+    }
+
+    select[multiple], select.single {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 2px solid #e5e7eb;
+      transition: all 0.3s ease;
+      background: #fff;
+      font-family: inherit;
+    }
+
+    select[multiple] {
+      height: 140px;
+    }
+
+    select:hover {
+      border-color: #c7d2fe;
+    }
+
+    select:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px 24px;
+      background: var(--gradient);
+      border: none;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--primary), transparent);
+      margin: 40px 0;
+      opacity: 0.3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 25px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 14px 10px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: var(--gradient);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.85rem;
+    }
+
+    td {
+      background: #fff;
+      transition: all 0.2s ease;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    td.cat {
+      text-align: left;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .no-feedback {
+      text-align: center;
+      color: #888;
+      margin: 40px 0;
+      padding: 40px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f0f4f8 100%);
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .summary-right {
+      margin-top: 30px;
+      padding: 24px;
+      background: linear-gradient(135deg, #f6f8fc 0%, #eef2f7 100%);
+      border-radius: 12px;
+      border-left: 4px solid var(--primary);
+      animation: fadeIn 0.5s ease-out 0.2s both;
+    }
+
+    .summary-right p {
+      margin: 12px 0;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .summary-right strong {
+      font-size: 1.1rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .w-narrow {
+      width: 50px;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+
+      .dashboard {
+        padding: 30px 20px;
+        border-radius: 16px;
+      }
+
+      .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .title-section h2 {
+        font-size: 1.6rem;
+      }
+
+      .faculty-card {
+        padding: 14px 18px;
+        font-size: 0.9rem;
+      }
+
+      .logout-btn {
+        width: 100%;
+        padding: 12px 20px;
+      }
+
+      h3 {
+        font-size: 1.2rem;
+      }
+
+      table {
+        font-size: 0.8rem;
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      th, td {
+        padding: 10px 6px;
+        font-size: 0.75rem;
+      }
+
+      .summary-right {
+        padding: 18px;
+      }
+
+      .summary-right p {
+        font-size: 0.9rem;
+      }
+
+      .summary-right strong {
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 15px 10px;
+      }
+
+      .dashboard {
+        padding: 25px 15px;
+      }
+
+      .title-section h2 {
+        font-size: 1.4rem;
+      }
+
+      .faculty-card {
+        padding: 12px 16px;
+        font-size: 0.85rem;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      ul li {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+      }
+
+      th, td {
+        padding: 8px 4px;
+        font-size: 0.7rem;
+      }
+
+      .w-narrow {
+        width: 35px;
+      }
     }
   </style>
 </head>
@@ -120,8 +458,10 @@
   <div class="top-bar">
     <div class="title-section">
       <h2>Faculty Dashboard</h2>
-      <div style="padding: 12px 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-size: 18px; font-weight: bold; color: #333; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-        Faculty: {{ faculty.name }} &nbsp; | &nbsp; ID: {{ faculty.usn }}
+      <div class="faculty-card">
+        <span>{{ faculty.name }}</span>
+        <span style="opacity: 0.7;">|</span>
+        <span>ID: {{ faculty.usn }}</span>
       </div>
     </div>
     <form action="{% url 'logout' %}" method="post">
@@ -167,7 +507,7 @@
       <form method="get" style="margin-bottom:20px">
         <input type="hidden" name="subject_id" value="{{ selected_subject.id }}">
         <input type="hidden" name="download" value="1">
-        <button type="submit">Download Feedback Summary (Word)</button>
+        <button type="submit">📥 Download Feedback Summary (Word)</button>
       </form>
 
       <!-- Feedback table -->

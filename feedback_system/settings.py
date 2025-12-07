@@ -27,6 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://unsymptomatic-niki-manipulatable.ngrok-free.dev'
+]
+
 #ALLOWED_HOSTS = ['10.159.166.100', 'localhost', '127.0.0.1']
 
 
