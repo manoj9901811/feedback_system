@@ -1,0 +1,11 @@
+Django==4.2.9
+gunicorn
+whitenoise==6.6.0
+python-docx
+openpyxl
+xlwt
+xhtml2pdf
+pandas
+django-environ
+dj_database_url
+psycopg2-binary

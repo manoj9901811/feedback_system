@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Feedback Report</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      padding: 20px;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+      color: #2d3748;
+      margin-bottom: 20px;
+    }
+    h3 {
+      margin-top: 40px;
+      color: #4a5568;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 10px 12px;
+      text-align: center;
+    }
+    th {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-weight: 600;
+    }
+    td.subject, td.feedback-question {
+      text-align: left;
+    }
+    .top-right-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transition: background 0.3s ease;
+    }
+    .top-right-btn:hover {
+      background: #5a67d8;
+    }
+    .view-btn, .download-btn {
+      background: #667eea;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 13px;
+      transition: background 0.3s ease;
+    }
+    .view-btn:hover, .download-btn:hover {
+      background: #5a67d8;
+    }
+    .button-container {
+      text-align: right;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <a href="{% url 'admin_dashboard' %}" class="top-right-btn">Back</a>
+
+  <h2>Faculty Feedback Summary</h2>
+  <table>
+    <thead>
+        <tr>
+            <th>Faculty</th>
+            <th>Subject</th>
+            <th>Average (%)</th>
+            <th>View</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in report %}
+        <tr>
+            <td>{{ row.faculty__name }}</td>
+            <td>{{ row.subject__name }}</td>
+            <td>{{ row.avg_rating|floatformat:2 }}</td>
+            <td>
+                <a href="?faculty_id={{ row.faculty__id }}&subject_id={{ row.subject__id }}" class="view-btn">View</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+
+  {% if selected_faculty and selected_subject %}
+    <h3>Feedback Summary for {{ selected_faculty.name }} - {{ selected_subject.name }}</h3>
+    <p><strong>Total Students:</strong> {{ total_students }}</p>
+    <p><strong>Students Present:</strong> {{ present_students }}</p>
+    <p><strong>Overall Average:</strong> {{ overall_avg }}%</p>
+    <p><strong>Interpretation:</strong> {{ interpretation }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Sl No</th>
+                <th>Feedback Category</th>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>4</th>
+                <th>5</th>
+                <th>Total</th>
+                <th>Marks</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in feedback_table %}
+            <tr>
+                <td>{{ row.sl_no }}</td>
+                <td class="feedback-question">{{ row.question }}</td>
+                <td>{{ row.counts.1 }}</td>
+                <td>{{ row.counts.2 }}</td>
+                <td>{{ row.counts.3 }}</td>
+                <td>{{ row.counts.4 }}</td>
+                <td>{{ row.counts.5 }}</td>
+                <td>{{ row.total }}</td>
+                <td>{{ row.marks }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="button-container">
+      <a href="#" onclick="downloadFeedback()" class="download-btn">Download Feedback Summary</a>
+    </div>
+  {% endif %}
+
+  <script>
+    function downloadFeedback() {
+      window.print(); // Generates a printable PDF from the page
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Faculty Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+      padding: 40px;
+      color: #333;
+    }
+    .dashboard {
+      max-width: 1100px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .1);
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin: 20px 0 10px;
+    }
+    select[multiple], select.single {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    select[multiple] {
+      height: 120px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #667eea;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .logout-btn {
+      background: #667eea;
+      margin-top: 0;
+    }
+    .divider {
+      height: 1px;
+      background: #ddd;
+      margin: 30px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 6px;
+      text-align: center;
+      font-size: 14px;
+    }
+    th {
+      background: #f3f3f3;
+      font-weight: 600;
+    }
+    td.cat {
+      text-align: left;
+    }
+    ul {
+      list-style: disc;
+      margin-left: 20px;
+    }
+    .no-feedback {
+      text-align: center;
+      color: #888;
+      margin-top: 30px;
+    }
+    .summary-right {
+      margin-top: 15px;
+      text-align: right;
+    }
+    .summary-right strong {
+      font-size: 16px;
+    }
+    .w-narrow {
+      width: 40px;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .faculty-info {
+      font-size: 14px;
+      color: #555;
+      text-align: right;
+      margin-right: 15px;
+    }
+    .title-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .title-section h2 {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+<div class="dashboard">
+
+  <!-- Top bar with title, faculty info & logout -->
+  <div class="top-bar">
+    <div class="title-section">
+      <h2>Faculty Dashboard</h2>
+      <div style="padding: 12px 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-size: 18px; font-weight: bold; color: #333; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        Faculty: {{ faculty.name }} &nbsp; | &nbsp; ID: {{ faculty.usn }}
+      </div>
+    </div>
+    <form action="{% url 'logout' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="logout-btn">Logout</button>
+    </form>
+  </div>
+
+  <!-- Assigned Subjects -->
+  <form method="post">{% csrf_token %}
+    {% if selected_subjects %}
+      <h3>Subjects Assigned to You:</h3>
+      <ul>
+        {% for s in selected_subjects %}
+          <li>{{ s.code }} – {{ s.name }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="no-feedback">No subjects assigned yet.</p>
+    {% endif %}
+  </form>
+
+  <div class="divider"></div>
+
+  <!-- Subject selector -->
+  <form method="get">
+    <label for="subject">View Feedback for:</label>
+    <select name="subject_id" id="subject" class="single" onchange="this.form.submit()">
+      <option value="">-- Select Subject --</option>
+      {% for s in selected_subjects %}
+        <option value="{{ s.id }}" {% if selected_subject and selected_subject.id == s.id %}selected{% endif %}>
+          {{ s.code }} – {{ s.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+
+  {% if selected_subject %}
+    <h3>Feedback for {{ selected_subject.code }} – {{ selected_subject.name }}</h3>
+
+    {% if feedback_table %}
+      <!-- Download button -->
+      <form method="get" style="margin-bottom:20px">
+        <input type="hidden" name="subject_id" value="{{ selected_subject.id }}">
+        <input type="hidden" name="download" value="1">
+        <button type="submit">Download Feedback Summary (Word)</button>
+      </form>
+
+      <!-- Feedback table -->
+      <table>
+        <tr>
+          <th class="w-narrow">Sl No</th>
+          <th>Feedback Category</th>
+          <th class="w-narrow">1</th>
+          <th class="w-narrow">2</th>
+          <th class="w-narrow">3</th>
+          <th class="w-narrow">4</th>
+          <th class="w-narrow">5</th>
+          <th>Total</th>
+          <th>Marks</th>
+        </tr>
+        {% for row in feedback_table %}
+          <tr>
+            <td>{{ row.sl_no }}</td>
+            <td class="cat">{{ row.question }}</td>
+            <td>{{ row.counts.1 }}</td>
+            <td>{{ row.counts.2 }}</td>
+            <td>{{ row.counts.3 }}</td>
+            <td>{{ row.counts.4 }}</td>
+            <td>{{ row.counts.5 }}</td>
+            <td>{{ row.total }}</td>
+            <td>{{ row.marks }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+
+      <!-- Summary -->
+      <div class="summary-right">
+        <p><strong>Average Marks: {{ overall_avg }}</strong></p>
+        <p><strong>Overall Feedback: {{ interpretation }}</strong></p>
+        <p>
+          {% if faculty_subject.section == "All" %}
+            Total Students: {{ total_students_all }}
+          {% else %}
+            Total Students: {{ total_students }}
+          {% endif %}
+          | Responses Received: {{ present_students }}
+        </p>
+      </div>
+    {% else %}
+      <p class="no-feedback">No feedback submitted yet for this subject.</p>
+    {% endif %}
+  {% endif %}
+</div>
+</body>
+</html>

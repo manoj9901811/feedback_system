@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Assign Section</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f9;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #444;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #5a67d8;
+    }
+
+    .top-right-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transition: background 0.3s ease;
+    }
+
+    .top-right-btn:hover {
+      background: #5a67d8;
+    }
+  </style>
+</head>
+<body>
+  <a href="{% url 'admin_dashboard' %}" class="top-right-btn">Back</a>
+
+  <div class="container">
+    <h2>Assign Section, Semester & Year</h2>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <label for="student">Select Students:</label>
+      <select name="student[]" multiple size="5">
+        {% for student in students %}
+          <option value="{{ student.id }}">{{ student.usn }} - {{ student.name }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="faculty">Select Faculties:</label>
+      <select name="faculty[]" multiple size="5">
+        {% for faculty in faculties %}
+          <option value="{{ faculty.id }}">{{ faculty.usn }} - {{ faculty.name }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="section">Select Section:</label>
+      <select name="section" required>
+        <option value="">-- Select Section --</option>
+        {% for section in sections %}
+          <option value="{{ section.id }}">{{ section.name }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="year">Select Year:</label>
+<select name="year" required>
+  {% for y in years %}
+    <option value="{{ y }}">{{ y }}</option>
+  {% endfor %}
+</select>
+
+<label for="semester">Select Semester:</label>
+<select name="semester" required>
+  {% for s in semesters %}
+    <option value="{{ s }}">{{ s }}</option>
+  {% endfor %}
+</select>
+
+
+      <button type="submit">Assign</button>
+    </form>
+  </div>
+</body>
+</html>

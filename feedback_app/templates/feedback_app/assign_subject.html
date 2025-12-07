@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Assign Subject</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f9;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: #444;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #5a67d8;
+    }
+
+    .top-right-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transition: background 0.3s ease;
+    }
+
+    .top-right-btn:hover {
+      background: #5a67d8;
+    }
+
+    hr {
+      margin: 30px 0;
+      border: none;
+      border-top: 2px dashed #ccc;
+    }
+  </style>
+</head>
+<body>
+  <a href="{% url 'admin_dashboard' %}" class="top-right-btn">Back</a>
+
+  <div class="container">
+    <h2>Assign Subject</h2>
+
+<form method="POST">
+  {% csrf_token %}
+
+  <h3>Assign Subject to Students</h3>
+  <input type="hidden" name="assign_type" value="student">
+
+  <label>Select Subject:</label>
+  <select name="subject_id_student" required>
+    <option value="">-- Select Subject --</option>
+    {% for subject in subjects %}
+      <option value="{{ subject.id }}">{{ subject.name }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Select Students:</label>
+<select name="student_ids" multiple required style="height: 120px; width: 100%;">
+  {% for student in students %}
+    <option value="{{ student.id }}">{{ student.usn }} - {{ student.name }}</option>
+  {% endfor %}
+</select>
+
+
+  <br>
+  <button type="submit">Assign to Students</button>
+</form>
+
+<hr>
+
+<form method="POST">
+  {% csrf_token %}
+
+  <h3>Assign Subject to Faculty</h3>
+  <input type="hidden" name="assign_type" value="faculty">
+
+  <label>Select Faculty:</label>
+  <select name="faculty_id" required>
+    <option value="">-- Select Faculty --</option>
+    {% for faculty in faculties %}
+      <option value="{{ faculty.id }}">{{ faculty.name }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Select Subject:</label>
+  <select name="subject_id_faculty" required>
+    <option value="">-- Select Subject --</option>
+    {% for subject in subjects %}
+      <option value="{{ subject.id }}">{{ subject.name }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Semester:</label>
+  <select name="semester">
+    {% for sem in semesters %}
+      <option value="{{ sem }}">{{ sem }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Section:</label>
+  <select name="section">
+    {% for sec in sections %}
+      <option value="{{ sec }}">{{ sec }}</option>
+    {% endfor %}
+  </select>
+
+  <label>Academic Year:</label>
+  <select name="year">
+    {% for y in years %}
+      <option value="{{ y }}">{{ y }}</option>
+    {% endfor %}
+  </select>
+
+  <br><br>
+  <button type="submit">Assign to Faculty</button>
+</form>
+
+  </div>
+</body>
+</html>
