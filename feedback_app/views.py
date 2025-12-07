@@ -392,7 +392,6 @@ def student_dashboard(request):
     if not student:
         return redirect('login')
 
-    # Get all subjects mapped to the student
     subject_names = StudentSubject.objects.filter(student_name=student.name).values_list('subject_name', flat=True)
     subjects = Subject.objects.filter(name__in=subject_names)
 
@@ -403,6 +402,7 @@ def student_dashboard(request):
     show_form = False
     final_comments = ''
     ratings = ['1', '2', '3', '4', '5']
+    already_submitted = False  # NEW FLAG
 
     if request.method == 'POST':
         selected_subject = request.POST.get('subject')
@@ -413,12 +413,23 @@ def student_dashboard(request):
             faculty_names = FacultySubject.objects.filter(subject_name=selected_subject).values_list('faculty_name', flat=True)
             selected_faculties = Faculty.objects.filter(name__in=faculty_names)
 
-        # If ratings are included, assume form is submitted
-        if selected_subject and selected_faculty and any(f"rating_{q.id}" in request.POST for q in FeedbackQuestion.objects.all()):
+        # FETCH FACULTY & SUBJECT OBJECTS
+        faculty_obj = Faculty.objects.filter(name=selected_faculty).first()
+        subject_obj = Subject.objects.filter(name=selected_subject).first()
+
+        # 🚫 CHECK IF FEEDBACK EXISTS
+        if faculty_obj and subject_obj:
+            if Feedback.objects.filter(student=student, faculty=faculty_obj, subject=subject_obj).exists():
+                already_submitted = True
+                show_form = False  # DO NOT SHOW FORM
+            else:
+                questions = FeedbackQuestion.objects.all()
+                show_form = True
+
+        # IF FORM SUBMITTED WITH RATINGS
+        if selected_subject and selected_faculty and any(f"rating_{q.id}" in request.POST for q in FeedbackQuestion.objects.all()) and not already_submitted:
             questions = FeedbackQuestion.objects.all()
             submitted_ratings = []
-            faculty_obj = Faculty.objects.filter(name=selected_faculty).first()
-            subject_obj = Subject.objects.filter(name=selected_subject).first()
 
             for question in questions:
                 rating = request.POST.get(f"rating_{question.id}")
@@ -434,14 +445,8 @@ def student_dashboard(request):
                         comments=final_comments
                     )
 
-            # Save feedback to Excel
             save_feedback_to_excel(request, student, questions, submitted_ratings)
-
             return redirect('course_end_feedback')
-
-        elif selected_subject and selected_faculty:
-            questions = FeedbackQuestion.objects.all()
-            show_form = True
 
     elif request.method == 'GET':
         selected_subject = request.GET.get('subject')
@@ -458,6 +463,7 @@ def student_dashboard(request):
         'questions': questions,
         'ratings': ratings,
         'show_form': show_form,
+        'already_submitted': already_submitted,  # SEND FLAG TO HTML
     })
 
 

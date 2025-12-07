@@ -460,71 +460,88 @@
 </head>
 <body>
 
-  <form method="POST" class="container">
-    {% csrf_token %}
-    <h2>Student Feedback Form</h2>
+<form method="POST" class="container">
+{% csrf_token %}
+<h2>Student Feedback Form</h2>
 
-    <!-- Student Details + Subject/Faculty Selection -->
-    <div class="info-section">
-      <div class="info-item"><p><strong>Name:</strong> {{ student.name }}</p></div>
-      <div class="info-item"><p><strong>USN:</strong> {{ student.usn }}</p></div>
-      <div class="info-item"><p><strong>Section:</strong> {{ student.section }}</p></div>
-      <div class="info-item"><p><strong>Semester:</strong> {{ student.semester }}</p></div>
-      <div class="info-item"><p><strong>Year:</strong> {{ student.year }}</p></div>
-    </div>
+<div class="info-section">
+  <div class="info-item"><p><strong>Name:</strong> {{ student.name }}</p></div>
+  <div class="info-item"><p><strong>USN:</strong> {{ student.usn }}</p></div>
+  <div class="info-item"><p><strong>Section:</strong> {{ student.section }}</p></div>
+  <div class="info-item"><p><strong>Semester:</strong> {{ student.semester }}</p></div>
+  <div class="info-item"><p><strong>Year:</strong> {{ student.year }}</p></div>
+</div>
 
-    <div class="selection-section">
-      <div class="info-item" style="flex: 1 1 100%;">
-        <label for="subject">Select Subject</label>
-        <select name="subject" id="subject" onchange="this.form.submit()" required>
-          <option value="">-- Select Subject --</option>
-          {% for subject in subjects %}
-            <option value="{{ subject.name }}" {% if selected_subject == subject.name %}selected{% endif %}>
-              {{ subject.code }} - {{ subject.name }}
-            </option>
-          {% endfor %}
-        </select>
-      </div>
-
-      {% if selected_subject %}
-      <div class="info-item" style="flex: 1 1 100%;">
-        <label for="faculty">Select Faculty</label>
-        <select name="faculty" id="faculty" onchange="this.form.submit()" required>
-          <option value="">-- Select Faculty --</option>
-          {% for faculty in selected_faculties %}
-            <option value="{{ faculty.name }}" {% if selected_faculty == faculty.name %}selected{% endif %}>
-              {{ faculty.name }}
-            </option>
-          {% endfor %}
-        </select>
-      </div>
-      {% endif %}
-    </div>
-
-    {% if selected_subject and selected_faculty and questions %}
-      <hr />
-      <h3 style="text-align:center; margin-bottom: 25px;">Feedback Questions</h3>
-
-      {% for question in questions %}
-        <div class="question-block">
-          <label>{{ question.text }}</label>
-          <div class="rating-row">
-            {% for rating in ratings %}
-              <label class="rating-label">
-                <input type="radio" name="rating_{{ question.id }}" value="{{ rating }}" required>
-                {{ rating }}
-              </label>
-            {% endfor %}
-          </div>
-        </div>
+<div class="selection-section">
+  <div class="info-item" style="flex:1 1 100%;">
+    <label for="subject">Select Subject</label>
+    <select name="subject" id="subject" onchange="this.form.submit()" required>
+      <option value="">-- Select Subject --</option>
+      {% for subject in subjects %}
+        <option value="{{ subject.name }}" {% if selected_subject == subject.name %}selected{% endif %}>
+          {{ subject.code }} - {{ subject.name }}
+        </option>
       {% endfor %}
+    </select>
+  </div>
 
-      <label for="final_comments">Any Comments (optional):</label>
-      <textarea name="final_comments" rows="4" placeholder="Share your suggestions or feedback..."></textarea>
+  {% if selected_subject %}
+  <div class="info-item" style="flex:1 1 100%;">
+    <label for="faculty">Select Faculty</label>
+    <select name="faculty" id="faculty" onchange="this.form.submit()" required>
+      <option value="">-- Select Faculty --</option>
+      {% for faculty in selected_faculties %}
+        <option value="{{ faculty.name }}" {% if selected_faculty == faculty.name %}selected{% endif %}>
+          {{ faculty.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+</div>
 
-      <button type="submit">Submit Feedback</button>
-    {% endif %}
-  </form>
+<!-- 🚫 SHOW MESSAGE IF ALREADY SUBMITTED -->
+{% if already_submitted %}
+<div style="
+  background:#fee2e2;
+  padding:18px;
+  border-left:5px solid #dc2626;
+  font-weight:600;
+  text-align:center;
+  color:#dc2626;
+  margin-top:20px;
+  border-radius:10px;">
+  You have already submitted feedback for this subject.
+</div>
+{% endif %}
+
+<!-- ✔️ SHOW QUESTIONS ONLY IF FORM ALLOWED -->
+{% if selected_subject and selected_faculty and show_form and questions %}
+<hr>
+<h3 style="text-align:center; margin-bottom:25px;">Feedback Questions</h3>
+
+{% for question in questions %}
+<div class="question-block">
+  <label>{{ question.text }}</label>
+  <div class="rating-row">
+    {% for rating in ratings %}
+      <label class="rating-label">
+        <input type="radio" name="rating_{{ question.id }}" value="{{ rating }}" required>
+        {{ rating }}
+      </label>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+
+<label for="final_comments">Any Comments (optional):</label>
+<textarea name="final_comments" rows="4" placeholder="Share your suggestions or feedback..."></textarea>
+
+<button type="submit">Submit Feedback</button>
+{% endif %}
+
+</form>
+
 
 </body>
 </html>
