@@ -4,155 +4,261 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login</title>
+
+  <!-- Font Awesome -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
+      flex-direction: column; /* required for footer */
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
+
     .login-container {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      padding: 45px 40px;
+      border-radius: 24px;
       width: 100%;
-      max-width: 400px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      animation: fadeInUp 0.6s ease-out;
+      max-width: 420px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+      animation: fadeInUp 0.8s ease;
     }
-    .login-container:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-    }
+
     h2 {
       text-align: center;
-      color: #333;
-      margin-bottom: 30px;
-      font-weight: 300;
-      position: relative;
+      margin-bottom: 35px;
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a202c;
     }
-    h2::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 50px;
-      height: 3px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-radius: 2px;
-    }
+
     .error-message {
-      color: #e74c3c;
-      background: rgba(231, 76, 60, 0.1);
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      border-left: 4px solid #e74c3c;
+      color: #c53030;
+      background: rgba(252, 129, 129, 0.15);
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 22px;
       font-size: 14px;
-      animation: shake 0.4s ease-in-out;
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
-    @keyframes shake {
-      10%, 30%, 50%, 70% { transform: translateX(-5px); }
-      0%, 20%, 40%, 60%, 80% { transform: translateX(0); }
-    }
+
     .form-group {
-      margin-bottom: 25px;
-      position: relative;
+      margin-bottom: 24px;
     }
+
     label {
       display: block;
       margin-bottom: 8px;
-      color: #555;
-      font-weight: 500;
       font-size: 14px;
+      font-weight: 600;
+      color: #4a5568;
     }
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 15px;
-      border: 2px solid #e1e5e9;
-      border-radius: 10px;
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .left-icon {
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      transform: translateY(-50%);
+      color: #667eea;
       font-size: 16px;
-      background: rgba(255, 255, 255, 0.8);
+      pointer-events: none;
+    }
+
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      color: #667eea;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px 50px 16px 46px;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      font-size: 16px;
+      background: #f7fafc;
       outline: none;
       transition: 0.3s;
     }
+
     input:focus {
       border-color: #667eea;
-      background: white;
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
     }
+
     button[type="submit"] {
       width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #ffffff;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: 0.3s;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      position: relative;
-      overflow: hidden;
     }
+
     button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
     }
-    button:active {
-      transform: translateY(0);
+
+    .btn-link-wrapper {
+      text-align: center;
+      margin-top: 22px;
     }
+
+    .btn-link {
+      display: inline-block;
+      padding: 12px 26px;
+      border-radius: 10px;
+      border: 2px solid #667eea;
+      color: #667eea;
+      font-weight: 600;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .btn-link:hover {
+      background: #667eea;
+      color: #ffffff;
+    }
+
     .form-footer {
       text-align: center;
-      margin-top: 30px;
-      color: #666;
+      margin-top: 28px;
       font-size: 14px;
+      color: #718096;
     }
+
+    /* Footer */
+    .footer {
+      margin-top: 22px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.9);
+      text-align: center;
+    }
+
+    .footer span {
+      font-weight: 600;
+    }
+
     @media (max-width: 480px) {
       .login-container {
-        padding: 30px 20px;
+        padding: 38px 26px;
+      }
+
+      h2 {
+        font-size: 28px;
       }
     }
+
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
+
 <body>
+
   <div class="login-container">
     <h2>Login</h2>
+
     {% if error %}
-      <div class="error-message">{{ error }}</div>
+      <div class="error-message">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        {{ error }}
+      </div>
     {% endif %}
-    <form method="post" id="loginForm" novalidate>
+
+    <form method="post">
       {% csrf_token %}
+
       <div class="form-group">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required />
+        <label>Username</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-user left-icon"></i>
+          <input type="text" name="username" required />
+        </div>
       </div>
+
       <div class="form-group">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required />
+        <label>Password</label>
+        <div class="input-wrapper">
+          <i class="fa-solid fa-lock left-icon"></i>
+          <input type="password" id="password" name="password" required />
+          <i class="fa-solid fa-eye toggle-password" onclick="togglePassword()"></i>
+        </div>
       </div>
+
       <button type="submit">Login</button>
     </form>
+
+    <div class="btn-link-wrapper">
+      <a href="{% url 'get_credentials' %}" class="btn-link">
+        Get Credentials (Student)
+      </a>
+    </div>
+
     <div class="form-footer">
       <p>Please enter your credentials to continue</p>
     </div>
   </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Created by <span>Roshan Vegas</span> &amp; <span>Manoj Somanna</span>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const password = document.getElementById("password");
+      const icon = document.querySelector(".toggle-password");
+
+      if (password.type === "password") {
+        password.type = "text";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+      } else {
+        password.type = "password";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
+      }
+    }
+  </script>
+
 </body>
 </html>

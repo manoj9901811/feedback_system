@@ -627,7 +627,7 @@ def facility_feedback(request):
         # Save to Excel in FacilityFeedback sheet
         save_feedback_to_excel(request, student, facilities, ratings, sheet_name='FacilityFeedback')
 
-        return redirect('admin_dashboard')
+        return redirect('student_dashboard')
 
     return render(request, 'feedback_app/facility_feedback.html', {
         'student': student,
@@ -1319,3 +1319,53 @@ def download_mappings_excel(request):
     # Write to Excel
     df.to_excel(response, index=False, sheet_name="Mappings")
     return response
+
+from django.shortcuts import render
+from django.core.mail import send_mail
+from django.contrib import messages
+from .models import Student
+
+def get_credentials(request):
+    show_login = False  # 👈 flag
+
+    if request.method == "POST":
+        usn = request.POST.get('usn')
+        email = request.POST.get('email')
+
+        try:
+            student = Student.objects.get(usn=usn)
+
+            send_mail(
+                subject="Your Login Credentials",
+                message=f"""
+Hello {student.name},
+
+Your login credentials are:
+
+User ID: {student.generated_userid}
+Password: {student.generated_password}
+
+Please keep them confidential.
+
+Best Regards,
+AMC Engineering College
+Department of MCA
+Asst Prof. Roshan Vegas
+Manoj Somanna
+                """,
+                from_email=None,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+
+            messages.success(request, "Credentials sent successfully.")
+            show_login = True   # ✅ show login link
+
+        except Student.DoesNotExist:
+            messages.error(request, "Invalid USN.")
+
+    return render(
+        request,
+        'feedback_app/get_credentials.html',
+        {'show_login': show_login}
+    )

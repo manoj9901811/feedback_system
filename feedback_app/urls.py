@@ -23,6 +23,7 @@ urlpatterns = [
     path("dashboard/clear-mappings/", views.clear_mappings, name="clear_mappings"),
     path("view-faculties/", views.view_faculties, name="view_faculties"),
     path("delete-faculty/<int:faculty_id>/", views.delete_faculty, name="delete_faculty"),
+        path('get-credentials/', views.get_credentials, name='get_credentials'),
 
 
 
